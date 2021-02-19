@@ -132,6 +132,7 @@ int main() {
                 //ref_vel = 29.5; //mph
                 too_close = true;
 
+                // if too close check lanes left
                 if(lane >0){
                   for (int l = 0; l < sensor_fusion.size(); ++l){
                     float l_d = sensor_fusion[l][6];
@@ -151,6 +152,7 @@ int main() {
                   }
                 }
 
+                // if too close check lanes right
                 if(lane < 2){
                   for (int r = 0; r < sensor_fusion.size(); ++r){
                     float r_d = sensor_fusion[r][6];
@@ -169,7 +171,8 @@ int main() {
                     }
                   }
                 }
-
+                
+                // rules for lane change
                 if (lane > 0 && !no_left_lane){
                   lane--;
                 } else if (lane < 2 && !no_right_lane){
@@ -181,16 +184,19 @@ int main() {
             }
           }
 
+          // rule for longitudinal control
           if(too_close){
             ref_vel -= 0.224;
           }else if (ref_vel < 49.5) {
             ref_vel += 0.224;
           }
 
-          
+          //create a list of widely spaced (x,y) waypoints, evenly spaced at 30 m
+          // these will be interpolated later with a spline to better control speed
           vector<double> ptsx;
           vector<double> ptsy;
 
+          // reference x, y and yaw states
           double ref_x    = car_x;
           double ref_y    = car_y;
           double ref_yaw  = deg2rad(car_yaw);

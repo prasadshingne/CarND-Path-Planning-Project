@@ -1,1 +1,3 @@
 build/
+simulator_output/
+*.mp4
