@@ -109,10 +109,12 @@ The Q&A video was very helpful and following it got me nearly to the finish.
 The code is divided into three parts -
 
 #### Sensor fusion, safety check and rule based behavior 
-Lines 119 to 133 check if there are any vehicles in the ego vehicle lane within 30 m ahead based on the sensor fusion data. If the car in the ego lane is too close lines 135 to 152 check if it is safe to change lanes to the left. Similarly lines 154 to 166 check if it is safe to change lanes to the right. Based on the safety check, lines 173 to 188 specify the behavior i.e. if the ego vehicle is approaching another vehicle and if left or right lanes are free make a left or right lane change respectively. Otherwise slow down by 0.5 mph (approx. = 0.224 m/s). If it is safe to accelerate i.e. the vehicle in front is more than 30 m away speed up by 0.5 mph.
+Lines 119 to 133 check if there are any vehicles in the ego vehicle lane within 30 m ahead based on the sensor fusion data. If the car in the ego lane is too close lines 135 to 152 check if it is safe to change lanes to the left. Similarly lines 154 to 168 check if it is safe to change lanes to the right. Based on the safety check, lines 176 to 185 specify the lane change behavior i.e. if the ego vehicle is approaching another vehicle and if left or right lanes are free make a left or right lane change respectively. Otherwise, lines 188 to 192 specify the longitudinal behavior, slow down by 0.5 mph (approx. = 0.224 m/s). If it is safe to accelerate i.e. the vehicle in front is more than 30 m away speed up by 0.5 mph.
 
 #### Trajectory generation
-Lines 191 to 297 define the code for the vehicle trajectory.
+Lines 191 to 297 define the code for the vehicle trajectory. Line 208 to 234 gather the reference state of the car from previous path points. Then three (far) points along the trajectory ahead of the reference at 30 m, 60 m and 90 m are added to initialize the spline. Before using the spline the points are transformed to the ego car coordinates (lines 249 to 257). To ensure continuity the previous path points are added to the new trajectory (line 269  to 273). The rest of the points are added by calculating the spline and transforming back to map reference frame (line 275 to 303). 
+
+Note: Ideally, I would breakup the code into functions for better use but I've left it as is with comments. Further, we can create an optimal trajectory by using a cost function which I haven't done. I would like to do this in the near future.
 
 
 
