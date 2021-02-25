@@ -101,7 +101,7 @@ I performed several simulations to ensure that the car drove safely.
 
 |Sim 1|Sim 2|Sim 3|
 |:---:|:---:|:---:|
-|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/4p6miles_1.jpg" width="320" height="270"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/4p6miles_2.jpg" width="480" height="270"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/4p9miles_3.jpg" width="480" height="270"/>|
+|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/4p6miles_1.jpg" width="480" height="270"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/4p6miles_2.jpg" width="480" height="270"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/4p9miles_3.jpg" width="480" height="270"/>|
 
 2. The car drives at or below the speed limit without unnecessarily slowing down.
 3. The car does not exceed total acceleration of 10 m/s^2 and a jerk of 10 m/s^3.
@@ -109,7 +109,7 @@ I performed several simulations to ensure that the car drove safely.
 
 |Sim 4|Sim 5|Sim 5|
 |:---:|:---:|:---:|
-|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/8p8miles.jpg" width="320" height="180"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/17p66miles.jpg" width="320" height="180"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/21p75miles.jpg" width="320" height="180"/>|
+|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/8p8_miles.jpg" width="480" height="270"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/17p66_miles.jpg" width="480" height="270"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/blob/master/output_images/21p75_miles.jpg" width="480" height="270"/>|
 
 I let the fifth simulation above run for over twenty miles or half hour and there were no incidents observed
 
