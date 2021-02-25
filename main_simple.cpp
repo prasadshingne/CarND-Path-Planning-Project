@@ -116,65 +116,119 @@ int main() {
           bool no_right_lane  = false;
           double front_car_speed = 0;
           int dist_to_car = 30;
-          double dvel_pos = 0.22352;
-          double dvel_neg = 0.4;
-          double speed_limit = 49.7; 
           // find ref_v to use
           for (int i=0; i < sensor_fusion.size(); i++){
             // car is in my lane
             float d = sensor_fusion[i][6];
-            
-            // find the lane of the next car
-            int next_car_lane;
-            if (d >=0 && d<4){
-              next_car_lane = 0;
-            } else if (d>=4 && d<8){
-              next_car_lane = 1;
-            } else if (d>=8 && d<=12){
-              next_car_lane = 2;
-            } else {
-              continue;
-            }
+            if(d < (2+4*lane+2) && d > (2+4*lane-2)){
+              double vx           = sensor_fusion[i][3];
+              double vy           = sensor_fusion[i][4];
+              double check_speed  = sqrt(vx*vx+vy*vy);
+              double check_car_s  = sensor_fusion[i][5];
 
-            double vx           = sensor_fusion[i][3];
-            double vy           = sensor_fusion[i][4];
-            double check_speed  = sqrt(vx*vx+vy*vy);
-            double check_car_s  = sensor_fusion[i][5];
+              check_car_s += ((double)prev_size* 0.02 * check_speed); //
 
-            check_car_s += ((double)prev_size* 0.02 * check_speed); //
+              if ((check_car_s>car_s)&&((check_car_s-car_s) < dist_to_car)){
 
-            // determine the possibilities for the ego car based on position of the other cars
-            if (next_car_lane == lane){
-              too_close |= (check_car_s > car_s) && ((check_car_s - car_s) <= dist_to_car); // if the next car s is greater than ego car s and it is within 30 m
-              // then the ego car is too close to the next car
-            } else if (next_car_lane - lane == 1) {
-              no_right_lane |= ((check_car_s-car_s)<=dist_to_car) && ((car_s-check_car_s)<=dist_to_car);
-              // if the next car in the righ lane is within +/- 30 m from the ego car then right lane is not available for lane change
-            } else if (lane - next_car_lane == 1) {
-              no_left_lane |= ((check_car_s-car_s)<=dist_to_car) && ((car_s-check_car_s)<=dist_to_car); 
-              // if the next car in the left lane is within +/- 30 m from the ego car then right lane is not available for lane change
+                //ref_vel = 29.5; //mph
+                front_car_speed = check_speed;
+                too_close = true;
+
+                // if too close check lanes left
+                if(lane >0){
+                  for (int l = 0; l < sensor_fusion.size(); ++l){
+                    float l_d = sensor_fusion[l][6];
+
+                    if (l_d < (2+4*(lane-1)+2) && l_d > (2+4* (lane-1)- 2)) {
+                      double l_vx = sensor_fusion[l][3];
+                      double l_vy = sensor_fusion[l][4];
+                      double l_check_speed = sqrt(l_vx*l_vx+l_vy*l_vy);
+                      double l_check_car_s   = sensor_fusion[l][5];
+
+                      l_check_car_s += ((double)prev_size*0.02*l_check_speed);
+                      if (((l_check_car_s>car_s) && (l_check_car_s-car_s)<dist_to_car) ||
+                      ((l_check_car_s<car_s) && (-l_check_car_s+car_s)<dist_to_car)){
+                        no_left_lane = true;
+                      }
+
+                    } /*else {
+                      no_left_lane = true;
+                    }*/
+                  }
+                }
+
+                // if too close check lanes right
+                if(lane < 2){
+                  for (int r = 0; r < sensor_fusion.size(); ++r){
+                    float r_d = sensor_fusion[r][6];
+
+                    if (r_d < (2+4*(lane+1)+2) && r_d > (2+4* (lane+1)- 2)) {
+                      double r_vx = sensor_fusion[r][3];
+                      double r_vy = sensor_fusion[r][4];
+                      double r_check_speed = sqrt(r_vx*r_vx+r_vy*r_vy);
+                      double r_check_car_s   = sensor_fusion[r][5];
+
+                      r_check_car_s += ((double)prev_size*0.02*r_check_speed);
+                      if (((r_check_car_s>car_s) && (r_check_car_s-car_s)<dist_to_car) || 
+                      ((r_check_car_s<car_s) && (-r_check_car_s+car_s)<dist_to_car)){
+                        no_right_lane = true;
+                      }
+
+                    }
+                    /*else {
+                      no_right_lane = true;
+                    }*/
+                  }
+                }
+                
+                // rules for lane change
+                /*
+                if (lane > 0 && !no_left_lane){
+                  lane--;
+                } else if (lane < 2 && !no_right_lane){
+                  lane++;
+                }*/
+
+              } 
+
             }
           }
 
-          // rules for lateral and longitudinal control
-          if (too_close) {
-            // there is a car within 30 m ahead of the ego car
-            if (!no_left_lane && lane > 0){
-              // if the ego car is not in the left most lane and the left lane is open -- change lane to the left
+          // rule for lateral and longitudinal control
+          /*-if(too_close){
+            ref_vel -= 0.224;
+            if (ref_vel < front_car_speed){
+              ref_vel = front_car_speed;
+            }
+            if (lane > 0 && !no_left_lane){
+                  lane--;
+                } else if (lane < 2 && !no_right_lane){
+                  lane++;
+                }
+          }else if (ref_vel < 49.75) {
+            ref_vel += 0.224;
+          }*/
+          double dvel = 0.22352;
+          double speed_limit = 49.7; 
+
+          if (too_close){
+            if(lane > 0 && !no_left_lane){
               lane--;
-            } else if(!no_right_lane && lane < 2){
-              // if the ego car is not in the right most lane and the right lene is open -- change lane to the right
+            } else if (lane < 2 && !no_right_lane){
               lane++;
             } else {
-              // if nither the left or right lane are open -- reduce speed
-              ref_vel -= dvel_neg;
+              ref_vel -= dvel; 
             }
-          } else if (ref_vel < speed_limit) {
-            ref_vel += dvel_pos;
+          } else {
+            /*if (lane != 1){
+              if((lane == 2 && !no_left_lane) || (lane == 0 && !no_right_lane)){
+                lane = 1;
+              }
+            }*/
+            if (ref_vel < speed_limit){
+              ref_vel += dvel;
+            }
           }
-            
-        
-
 
           //create a list of widely spaced (x,y) waypoints, evenly spaced at 30 m
           // these will be interpolated later with a spline to better control speed
@@ -286,6 +340,54 @@ int main() {
             next_y_vals.push_back(y_point);
 
           }
+
+          // Simple lane follow
+          /*double dist_inc = 0.3;
+          for (int i = 0; i < 50; ++i) {
+
+            double next_s = car_s + (i+1) * dist_inc;
+            double next_d = 6;
+            vector<double> xy = getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+            
+            next_x_vals.push_back(xy[0]);
+            next_y_vals.push_back(xy[1]);
+            //next_x_vals.push_back(car_x+(dist_inc*i)*cos(deg2rad(car_yaw)));
+            //next_y_vals.push_back(car_y+(dist_inc*i)*sin(deg2rad(car_yaw)));
+          }*/
+          
+          // make circle
+          /*
+          double pos_x;
+          double pos_y;
+          double angle;
+          int path_size = previous_path_x.size();
+
+          for (int i = 0; i < path_size; ++i) {
+            next_x_vals.push_back(previous_path_x[i]);
+            next_y_vals.push_back(previous_path_y[i]);
+          }
+
+          if (path_size == 0) {
+            pos_x = car_x;
+            pos_y = car_y;
+            angle = deg2rad(car_yaw);
+          } else {
+            pos_x = previous_path_x[path_size-1];
+            pos_y = previous_path_y[path_size-1];
+
+            double pos_x2 = previous_path_x[path_size-2];
+            double pos_y2 = previous_path_y[path_size-2];
+            angle = atan2(pos_y-pos_y2,pos_x-pos_x2);
+          }
+
+          double dist_inc = 0.5;
+          for (int i = 0; i < 50-path_size; ++i) {    
+            next_x_vals.push_back(pos_x+(dist_inc)*cos(angle+(i+1)*(pi()/100)));
+            next_y_vals.push_back(pos_y+(dist_inc)*sin(angle+(i+1)*(pi()/100)));
+            pos_x += (dist_inc)*cos(angle+(i+1)*(pi()/100));
+            pos_y += (dist_inc)*sin(angle+(i+1)*(pi()/100));
+          }
+          */
 
           msgJson["next_x"] = next_x_vals;
           msgJson["next_y"] = next_y_vals;
