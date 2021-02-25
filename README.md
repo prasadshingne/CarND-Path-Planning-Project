@@ -95,12 +95,27 @@ The code compiles correctly. I did not change the cmake file. The only file that
 
 ### Valid Trajectories
 
-1. The car is able to drive for a distance greater than 4.32 miles without incident. This is the link to my simulation output [video](https://www.youtube.com/watch?v=Iq18Msnl48s).
+I performed several simulations to ensure that the car drove safely.
+
+1. The car is able to drive for a distance greater than 4.32 miles without incident.
+
+|Sim 1|Sim 2|Sim 3|
+|:---:|:---:|:---:|
+|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/tree/master/output_images/4p6miles_1.jpg" width="480" height="270"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/tree/master/output_images/4p6miles_2.jpg" width="480" height="270"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/tree/master/output_images/4p9miles_3.jpg" width="480" height="270"/>|
+
 2. The car drives at or below the speed limit without unnecessarily slowing down.
 3. The car does not exceed total acceleration of 10 m/s^2 and a jerk of 10 m/s^3.
 4. The car does not collide with other road users.
+
+|Sim 4|Sim 5|Sim 5|
+|:---:|:---:|:---:|
+|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/tree/master/output_images/8p8miles.jpg" width="480" height="270"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/tree/master/output_images/17p66miles.jpg" width="480" height="270"/>|<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/tree/master/output_images/21p75miles.jpg" width="480" height="270"/>|
+
+I let the fifth simulation above run for over twenty miles or half hour and there were no incidents observed
+
 5. The car stays in the lane except while changing lanes. It does not take too long to change lanes and is always in the right three lanes.
-6. The car is able to perform smooth lane changes at safely.
+6. The car is able to perform smooth lane changes safely.
+<img src="https://github.com/prasadshingne/CarND-Path-Planning-Project/tree/master/output_images/lane_change.jpg" width="480" height="270"/>
 
 ### Reflection
 
